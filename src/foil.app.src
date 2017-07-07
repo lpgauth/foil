@@ -1,0 +1,11 @@
+{application, foil, [
+  {applications, [kernel, stdlib, metal]},
+  {description, "High-Performance Erlang Cache Compiler"},
+  {env, []},
+  {licenses, ["MIT"]},
+  {links, [{"GitHub", "https://github.com/lpgauth/foil"}]},
+  {maintainers, ["Louis-Philippe Gauthier"]},
+  {mod, {foil_app, []}},
+  {registered, []},
+  {vsn, "0.1.0"}
+]}.
