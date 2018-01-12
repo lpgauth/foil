@@ -23,7 +23,7 @@
     ok | error().
 
 delete(Namespace) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             ets:delete(Module),
             ets:delete(?FOIL_TABLE, Namespace),
@@ -32,60 +32,75 @@ delete(Namespace) ->
             ok;
         {error, key_not_found} ->
             {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
 
 -spec delete(namespace(), key()) ->
     ok | error().
 
 delete(Namespace, Key) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             ets:delete(Module, Key),
             ok;
         {error, key_not_found} ->
             {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
 
 -spec insert(namespace(), key(), value()) ->
     ok | error().
 
 insert(Namespace, Key, Value) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             ets:insert(Module, {Key, Value}),
             ok;
         {error, key_not_found} ->
             {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
 
 -spec load(namespace()) ->
     ok | error().
 
 load(Namespace) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             KVs = ets:tab2list(Module),
             foil_compiler:load(Module, KVs);
         {error, key_not_found} ->
             {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
 
 -spec lookup(namespace(), key()) ->
     {ok, value()} | error().
 
 lookup(Namespace, Key) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             Module:lookup(Key);
         {error, key_not_found} ->
             {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
 
 -spec new(namespace()) ->
     ok | error().
 
 new(Namespace) ->
-    case foil_modules:lookup(Namespace) of
+    try foil_modules:lookup(Namespace) of
         {ok, _Module} ->
             {error, module_exists};
         {error, key_not_found} ->
@@ -96,8 +111,10 @@ new(Namespace) ->
             ets:insert(?FOIL_TABLE, {Namespace, Module}),
             KVs = ets:tab2list(?FOIL_TABLE),
             foil_compiler:load(foil_modules, KVs)
+    catch
+        error:undef ->
+            {error, foil_not_started}
     end.
-
 %% private
 module(Namespace) ->
     list_to_atom(atom_to_list(Namespace) ++ "_foil").

@@ -4,6 +4,14 @@
 
 foil_test() ->
     error_logger:tty(false),
+
+    {error, foil_not_started} = foil:new(test),
+    {error, foil_not_started} = foil:insert(test, key, value),
+    {error, foil_not_started} = foil:load(test),
+    {error, foil_not_started} = foil:lookup(tets, key),
+    {error, foil_not_started} = foil:delete(test, key),
+    {error, foil_not_started} = foil:delete(test),
+
     foil_app:start(),
 
     ok = foil:new(test),
