@@ -58,9 +58,10 @@ foil_any_term_test()->
     TestRef2 = make_ref(),
     RefList = [TestRef1, TestRef2],
 
-    ComplexListTerm = [make_ref(), make_ref(), {1,2,moo, {make_ref(), TestPid}}, "Hello"],
+    ComplexListTerm =
+        [make_ref(), make_ref(), {1, 2, moo, {make_ref(), TestPid}}, "Hello"],
     ComplexTupleTerm1 = {1, {ref1, make_ref()}, [TestPid]},
-    ComplexTupleTerm2 = {moo, boo, make_ref(), {1,2,3}, [5,6,7]},
+    ComplexTupleTerm2 = {moo, boo, make_ref(), {1, 2, 3}, [5, 6, 7]},
     PropList = [{ref1, make_ref()}, {ref2, make_ref()}, {ref3, make_ref()}],
 
     ok = foil:insert(Table, ref1, TestRef1),
@@ -79,15 +80,15 @@ foil_any_term_test()->
     {ok, TestRef1} = any_term_test_foil:lookup(ref1),
     {ok, TestRef1} = foil:lookup(Table, ref1),
 
-%%    {ok, ref2} = any_term_test_foil:lookup(list_to_binary(term_to_binary(TestRef2))),
-%%    {ok, ref2} = foil:lookup(Table, TestRef2),
+    {ok, TestRef2} = any_term_test_foil:lookup(ref2),
+    {ok, TestRef2} = foil:lookup(Table, ref2),
 
     {ok, RefList} = any_term_test_foil:lookup(ref_list),
     {ok, RefList} = foil:lookup(Table, ref_list),
 
     {ok, TestPid} = any_term_test_foil:lookup(pid),
     {ok, TestPid} = foil:lookup(Table, pid),
-    {current_function,{timer,sleep,1}} = process_info(TestPid, current_function),
+    {current_function, {timer, sleep, 1}} = process_info(TestPid, current_function),
 
     {ok, ComplexListTerm} = any_term_test_foil:lookup(list),
     {ok, ComplexListTerm} = foil:lookup(Table, list),

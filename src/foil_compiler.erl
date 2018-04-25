@@ -62,8 +62,10 @@ to_syntax(List) when is_list(List) ->
     erl_syntax:list([to_syntax(X) || X <- List]);
 to_syntax(ComplexTerm) ->
     SerializedTerm = term_to_binary(ComplexTerm),
-    SerializedTermStringSyntax = erl_syntax:string(binary_to_list(SerializedTerm)),
-    SerializedTermBinarySyntax = erl_syntax:binary([erl_syntax:binary_field(SerializedTermStringSyntax)]),
+    SerializedTermStringSyntax =
+      erl_syntax:string(binary_to_list(SerializedTerm)),
+    SerializedTermBinarySyntax =
+      erl_syntax:binary([erl_syntax:binary_field(SerializedTermStringSyntax)]),
     erl_syntax:application(
         erl_syntax:atom(binary_to_term),
         [SerializedTermBinarySyntax]).
