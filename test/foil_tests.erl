@@ -88,7 +88,8 @@ foil_any_term_test()->
 
     {ok, TestPid} = any_term_test_foil:lookup(pid),
     {ok, TestPid} = foil:lookup(Table, pid),
-    {current_function, {timer, sleep, 1}} = process_info(TestPid, current_function),
+    {current_function, {timer, sleep, 1}} =
+      process_info(TestPid, current_function),
 
     {ok, ComplexListTerm} = any_term_test_foil:lookup(list),
     {ok, ComplexListTerm} = foil:lookup(Table, list),
