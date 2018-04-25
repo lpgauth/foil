@@ -58,12 +58,8 @@ to_syntax(Float) when is_float(Float) ->
     erl_syntax:float(Float);
 to_syntax(Integer) when is_integer(Integer) ->
     erl_syntax:integer(Integer);
-to_syntax(List) when is_list(List) ->
-    erl_syntax:list([to_syntax(X) || X <- List]);
-to_syntax(Tuple) when is_tuple(Tuple) ->
-    erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]);
-to_syntax(AnyTerm) ->
-    SerializedTerm = term_to_binary(AnyTerm),
+to_syntax(ComplexTerm) ->
+    SerializedTerm = term_to_binary(ComplexTerm),
     SerializedTermStringSyntax = erl_syntax:string(binary_to_list(SerializedTerm)),
     SerializedTermBinarySyntax = erl_syntax:binary([erl_syntax:binary_field(SerializedTermStringSyntax)]),
     erl_syntax:application(
