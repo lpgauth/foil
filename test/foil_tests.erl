@@ -21,6 +21,8 @@ foil_test() ->
     ok = foil:insert(test, key2, [<<"foo">>, <<"bar">>]),
     ok = foil:insert(test, key3, {1, 1.234}),
     ok = foil:insert(test, key4, "test"),
+    ok = foil:insert(test, "key5", 5.5),
+    ok = foil:insert(test, 1.234, 2),
     {error, module_not_found} = foil:insert(test2, key2, value),
 
     ok = foil:delete(test, key4),
@@ -32,6 +34,8 @@ foil_test() ->
     {ok, value} = test_foil:lookup(key),
     {ok, [<<"foo">>, <<"bar">>]} = foil:lookup(test, key2),
     {ok, {1, 1.234}} = foil:lookup(test, key3),
+    {ok, 5.5} = foil:lookup(test, "key5"),
+    {ok, 2} = foil:lookup(test, 1.234),
     {error, module_not_found} = foil:lookup(test2, key),
     {error, key_not_found} = foil:lookup(test, key4),
 
@@ -64,17 +68,19 @@ foil_any_term_test()->
     ok = foil:insert(Table, ref_list, RefList),
     ok = foil:insert(Table, pid, TestPid),
     ok = foil:insert(Table, list, ComplexListTerm),
-    ok = foil:insert(Table, tuple1, ComplexTupleTerm1),
-    ok = foil:insert(Table, tuple2, ComplexTupleTerm2),
-    ok = foil:insert(Table, prop_list, PropList),
+    ok = foil:insert(Table, 1, ComplexTupleTerm1),
+    ok = foil:insert(Table, 2, ComplexTupleTerm2),
+    ok = foil:insert(Table, "prop_list", PropList),
 
     ok = foil:load(Table),
+
+    ct:print("MODULE CODE: ~p~n", [code:load_file(Table)]),
 
     {ok, TestRef1} = any_term_test_foil:lookup(ref1),
     {ok, TestRef1} = foil:lookup(Table, ref1),
 
-    {ok, TestRef2} = any_term_test_foil:lookup(ref2),
-    {ok, TestRef2} = foil:lookup(Table, ref2),
+%%    {ok, ref2} = any_term_test_foil:lookup(list_to_binary(term_to_binary(TestRef2))),
+%%    {ok, ref2} = foil:lookup(Table, TestRef2),
 
     {ok, RefList} = any_term_test_foil:lookup(ref_list),
     {ok, RefList} = foil:lookup(Table, ref_list),
@@ -86,14 +92,14 @@ foil_any_term_test()->
     {ok, ComplexListTerm} = any_term_test_foil:lookup(list),
     {ok, ComplexListTerm} = foil:lookup(Table, list),
 
-    {ok, ComplexTupleTerm1} = any_term_test_foil:lookup(tuple1),
-    {ok, ComplexTupleTerm1} = foil:lookup(Table, tuple1),
+    {ok, ComplexTupleTerm1} = any_term_test_foil:lookup(1),
+    {ok, ComplexTupleTerm1} = foil:lookup(Table, 1),
 
-    {ok, ComplexTupleTerm2} = any_term_test_foil:lookup(tuple2),
-    {ok, ComplexTupleTerm2} = foil:lookup(Table, tuple2),
+    {ok, ComplexTupleTerm2} = any_term_test_foil:lookup(2),
+    {ok, ComplexTupleTerm2} = foil:lookup(Table, 2),
 
-    {ok, PropList} = any_term_test_foil:lookup(prop_list),
-    {ok, PropList} = foil:lookup(Table, prop_list),
+    {ok, PropList} = any_term_test_foil:lookup("prop_list"),
+    {ok, PropList} = foil:lookup(Table, "prop_list"),
 
     ok = foil:delete(Table),
     {error, module_not_found} = foil:delete(Table),
