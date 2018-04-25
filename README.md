@@ -15,6 +15,14 @@ Foil is a cache that compiles key-values into Erlang modules. Key-values can be 
 
 ## Examples
 
+
+```
+erl -pa  _build/compile/lib/*/ebin
+Erlang/OTP 20 [erts-9.3] [source] [64-bit] [smp:16:16] [ds:16:16:10] [async-threads:10] [kernel-poll:false]
+
+Eshell V9.3  (abort with ^G)
+```
+
 ```erlang
 1> foil_app:start().
 {ok, [metal, foil]}
@@ -39,7 +47,42 @@ ok
 
 8> foil:lookup(test, key3).
 {error, key_not_found}
+
+9> foil:new(complex_test).
+ok
+
+10> Pid = spawn(timer, sleep, [100000]).      
+<0.70.0>
+
+11> foil:insert(complex_test, pid, Pid).
+ok
+
+12> Ref = make_ref().
+#Ref<0.2665151396.1923612679.12103>
+
+13> foil:insert(complex_test, ref, Ref).
+ok
+
+14> ComplexTerm = [Ref, {my_sleepy_pid, Pid}, [1,2,9.5], [{one, "one"}, {two, "two"}, {pid_again, Pid}]].
+
+15> foil:insert(complex_test, term, ComplexTerm).
+ok
+
+16> foil:load(complex_test).
+ok
+
+17>{ok, Pid} = complex_test_foil:lookup(pid).
+18>{current_function,{timer,sleep,1}} = process_info(Pid, current_function).
+
+19>{ok, Ref} = complex_test_foil:lookup(ref).
+
+20>{ok, ComplexTerm} = complex_test_foil:lookup(term).
+
+21>foil:delete(complex_test).
+ok
+
 ```
+
 
 ## Tests
 
