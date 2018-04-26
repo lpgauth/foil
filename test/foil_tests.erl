@@ -75,8 +75,6 @@ foil_any_term_test()->
 
     ok = foil:load(Table),
 
-    ct:print("MODULE CODE: ~p~n", [code:load_file(Table)]),
-
     {ok, TestRef1} = any_term_test_foil:lookup(ref1),
     {ok, TestRef1} = foil:lookup(Table, ref1),
 
