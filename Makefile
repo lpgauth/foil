@@ -3,6 +3,11 @@ REBAR3=./bin/rebar3
 
 all: compile
 
+bench:
+	@echo "Running bin/bench.sh..."
+	@$(REBAR3) as test compile
+	@./bin/bench.sh
+
 clean:
 	@echo "Running rebar3 clean..."
 	@$(REBAR3) clean -a
@@ -39,4 +44,4 @@ xref:
 	@echo "Running rebar3 xref..."
 	@$(REBAR3) xref
 
-.PHONY: clean compile coveralls dialyzer edoc elvis eunit xref
+.PHONY: bench clean compile coveralls dialyzer edoc elvis eunit xref
