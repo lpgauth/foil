@@ -61,4 +61,15 @@ to_syntax(Integer) when is_integer(Integer) ->
 to_syntax(List) when is_list(List) ->
     erl_syntax:list([to_syntax(X) || X <- List]);
 to_syntax(Tuple) when is_tuple(Tuple) ->
-    erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]).
+    erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]);
+to_syntax(Ref) when is_reference(Ref) ->
+    erl_syntax:integer(Ref);
+to_syntax(ComplexTerm) ->
+    SerializedTerm = term_to_binary(ComplexTerm),
+    SerializedTermStringSyntax =
+      erl_syntax:string(binary_to_list(SerializedTerm)),
+    SerializedTermBinarySyntax =
+      erl_syntax:binary([erl_syntax:binary_field(SerializedTermStringSyntax)]),
+    erl_syntax:application(
+        erl_syntax:atom(binary_to_term),
+        [SerializedTermBinarySyntax]).
