@@ -1,5 +1,5 @@
 {application, foil, [
-  {applications, [kernel, stdlib, metal]},
+  {applications, [kernel, stdlib, metal, compiler, syntax_tools]},
   {description, "High-Performance Erlang Cache Compiler"},
   {env, []},
   {licenses, ["MIT"]},
