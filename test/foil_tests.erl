@@ -11,6 +11,7 @@ foil_test() ->
     {error, foil_not_started} = foil:lookup(tets, key),
     {error, foil_not_started} = foil:delete(test, key),
     {error, foil_not_started} = foil:delete(test),
+    {error, foil_not_started} = foil:all(test),
 
     foil_app:start(),
 
@@ -34,6 +35,13 @@ foil_test() ->
     {ok, {1, 1.234}} = foil:lookup(test, key3),
     {error, module_not_found} = foil:lookup(test2, key),
     {error, key_not_found} = foil:lookup(test, key4),
+
+    {ok, [
+        {key, value},
+        {key3, {1, 1.234}},
+        {key2, [<<"foo">>, <<"bar">>]}
+    ]} = foil:all(test),
+    {error, module_not_found} = foil:all(test2),
 
     ok = foil:delete(test),
     {error, module_not_found} = foil:delete(test),
