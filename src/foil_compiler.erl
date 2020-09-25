@@ -21,13 +21,23 @@ load(Module, KVs) ->
 forms(Module, KVs) ->
     Mod = erl_syntax:attribute(erl_syntax:atom(module),
         [erl_syntax:atom(Module)]),
-    ExportList = [erl_syntax:arity_qualifier(erl_syntax:atom(lookup),
-        erl_syntax:integer(1))],
+    ExportList = [
+        erl_syntax:arity_qualifier(erl_syntax:atom(lookup),
+        erl_syntax:integer(1)),
+        erl_syntax:arity_qualifier(erl_syntax:atom(all),
+        erl_syntax:integer(0))],
     Export = erl_syntax:attribute(erl_syntax:atom(export),
         [erl_syntax:list(ExportList)]),
-    Function = erl_syntax:function(erl_syntax:atom(lookup),
+    Lookup = erl_syntax:function(erl_syntax:atom(lookup),
         lookup_clauses(KVs)),
-    [erl_syntax:revert(X) || X <- [Mod, Export, Function]].
+    All = erl_syntax:function(erl_syntax:atom(all),
+        all(lists:sort(KVs))),
+    [erl_syntax:revert(X) || X <- [Mod, Export, Lookup, All]].
+
+all(KVs) ->
+    Pairs = [erl_syntax:tuple([to_syntax(K), to_syntax(V)]) || {K, V} <- KVs],
+    Body = erl_syntax:tuple([erl_syntax:atom(ok), erl_syntax:list(Pairs)]),
+    [erl_syntax:clause([], [Body])].
 
 lookup_clause(Key, Value) ->
     Var = to_syntax(Key),

@@ -8,7 +8,8 @@ foil_test() ->
     {error, foil_not_started} = foil:new(test),
     {error, foil_not_started} = foil:insert(test, key, value),
     {error, foil_not_started} = foil:load(test),
-    {error, foil_not_started} = foil:lookup(tets, key),
+    {error, foil_not_started} = foil:lookup(test, key),
+    {error, foil_not_started} = foil:all(test),
     {error, foil_not_started} = foil:delete(test, key),
     {error, foil_not_started} = foil:delete(test),
 
@@ -32,7 +33,13 @@ foil_test() ->
     {ok, value} = test_foil:lookup(key),
     {ok, [<<"foo">>, <<"bar">>]} = foil:lookup(test, key2),
     {ok, {1, 1.234}} = foil:lookup(test, key3),
+    {ok, [
+        {key, value},
+        {key2, [<<"foo">>, <<"bar">>]},
+        {key3, {1, 1.234}}
+    ]} = foil:all(test),
     {error, module_not_found} = foil:lookup(test2, key),
+    {error, module_not_found} = foil:all(test2),
     {error, key_not_found} = foil:lookup(test, key4),
 
     ok = foil:delete(test),
