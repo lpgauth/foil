@@ -33,11 +33,11 @@ foil_test() ->
     {ok, value} = test_foil:lookup(key),
     {ok, [<<"foo">>, <<"bar">>]} = foil:lookup(test, key2),
     {ok, {1, 1.234}} = foil:lookup(test, key3),
-    {ok, [
-        {key, value},
-        {key2, [<<"foo">>, <<"bar">>]},
-        {key3, {1, 1.234}}
-    ]} = foil:all(test),
+    {ok, #{
+        key := value,
+        key2 := [<<"foo">>, <<"bar">>],
+        key3 := {1, 1.234}
+    }} = foil:all(test),
     {error, module_not_found} = foil:lookup(test2, key),
     {error, module_not_found} = foil:all(test2),
     {error, key_not_found} = foil:lookup(test, key4),

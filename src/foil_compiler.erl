@@ -35,8 +35,9 @@ forms(Module, KVs) ->
     [erl_syntax:revert(X) || X <- [Mod, Export, Lookup, All]].
 
 all(KVs) ->
-    Pairs = [erl_syntax:tuple([to_syntax(K), to_syntax(V)]) || {K, V} <- KVs],
-    Body = erl_syntax:tuple([erl_syntax:atom(ok), erl_syntax:list(Pairs)]),
+    Pairs = [erl_syntax:map_field_assoc(to_syntax(K), to_syntax(V))
+        || {K, V} <- KVs],
+    Body = erl_syntax:tuple([erl_syntax:atom(ok), erl_syntax:map_expr(Pairs)]),
     [erl_syntax:clause([], [Body])].
 
 lookup_clause(Key, Value) ->
