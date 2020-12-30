@@ -10,6 +10,7 @@
 
 
 -export([
+    all/1,
     delete/1,
     delete/2,
     insert/3,
@@ -19,6 +20,20 @@
 ]).
 
 %% public
+-spec all(namespace()) ->
+    {ok, #{key() := value()}} | error().
+
+all(Namespace) ->
+    try foil_modules:lookup(Namespace) of
+        {ok, Module} ->
+            Module:all();
+        {error, key_not_found} ->
+            {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
+    end.
+
 -spec delete(namespace()) ->
     ok | error().
 
