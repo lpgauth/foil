@@ -14,6 +14,7 @@
     delete/1,
     delete/2,
     insert/3,
+    insert_new/3,
     load/1,
     lookup/2,
     new/1
@@ -75,6 +76,20 @@ insert(Namespace, Key, Value) ->
         {ok, Module} ->
             ets:insert(Module, {Key, Value}),
             ok;
+        {error, key_not_found} ->
+            {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
+    end.
+
+-spec insert_new(namespace(), key(), value()) ->
+    boolean() | error().
+
+insert_new(Namespace, Key, Value) ->
+    try foil_modules:lookup(Namespace) of
+        {ok, Module} ->
+            ets:insert_new(Module, {Key, Value});
         {error, key_not_found} ->
             {error, module_not_found}
     catch
