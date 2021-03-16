@@ -13,6 +13,7 @@
     all/1,
     delete/1,
     delete/2,
+    foldl/3,
     insert/3,
     insert_new/3,
     load/1,
@@ -61,6 +62,20 @@ delete(Namespace, Key) ->
         {ok, Module} ->
             ets:delete(Module, Key),
             ok;
+        {error, key_not_found} ->
+            {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
+    end.
+
+-spec foldl(fun(), term(), namespace()) ->
+    term() | error().
+
+foldl(Fun, Acc, Namespace) ->
+    try foil_modules:lookup(Namespace) of
+        {ok, Module} ->
+            ets:foldl(Fun, Acc, Module);
         {error, key_not_found} ->
             {error, module_not_found}
     catch
