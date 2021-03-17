@@ -74,4 +74,8 @@ to_syntax(List) when is_list(List) ->
 to_syntax(Tuple) when is_tuple(Tuple) ->
     erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]);
 to_syntax(Ref) when is_reference(Ref) ->
-    erl_syntax:integer(Ref).
+    erl_syntax:integer(Ref);
+to_syntax(Map) when is_map(Map) ->
+    Fields = [erl_syntax:map_field_assoc(erl_syntax:abstract(Key), to_syntax(Value))
+        || {Key, Value} <- maps:to_list(Map)],
+    erl_syntax:map_expr(Fields).
