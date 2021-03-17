@@ -18,6 +18,7 @@
     insert_new/3,
     load/1,
     lookup/2,
+    lookup_ets/2,
     new/1
 ]).
 
@@ -134,6 +135,25 @@ lookup(Namespace, Key) ->
     try foil_modules:lookup(Namespace) of
         {ok, Module} ->
             Module:lookup(Key);
+        {error, key_not_found} ->
+            {error, module_not_found}
+    catch
+        error:undef ->
+            {error, foil_not_started}
+    end.
+
+-spec lookup_ets(namespace(), key()) ->
+    {ok, value()} | error().
+
+lookup_ets(Namespace, Key) ->
+    try foil_modules:lookup(Namespace) of
+        {ok, Module} ->
+            case ets:lookup(Module, Key) of
+                [{Key, Value}] ->
+                    {ok, Value};
+                _ ->
+                    {error, key_not_found}
+            end;
         {error, key_not_found} ->
             {error, module_not_found}
     catch
