@@ -22,6 +22,9 @@ foil_test() ->
     ok = foil:insert(test, key2, [<<"foo">>, <<"bar">>]),
     ok = foil:insert(test, key3, {1, 1.234}),
     ok = foil:insert(test, key4, "test"),
+    Ref = new_ref()
+    ok = foil:insert(test, key5, Ref),
+
     {error, module_not_found} = foil:insert(test2, key2, value),
 
     ok = foil:delete(test, key4),
