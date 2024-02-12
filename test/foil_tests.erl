@@ -22,8 +22,10 @@ foil_test() ->
     ok = foil:insert(test, key2, [<<"foo">>, <<"bar">>]),
     ok = foil:insert(test, key3, {1, 1.234}),
     ok = foil:insert(test, key4, "test"),
-    Ref = new_ref()
-    ok = foil:insert(test, key5, Ref),
+    ok = foil:insert(test, key5, #{"hello" => 123}),
+
+    Ref = erlang:make_ref(),
+    ok = foil:insert(test, key6, Ref),
 
     {error, module_not_found} = foil:insert(test2, key2, value),
 
@@ -39,7 +41,9 @@ foil_test() ->
     {ok, #{
         key := value,
         key2 := [<<"foo">>, <<"bar">>],
-        key3 := {1, 1.234}
+        key3 := {1, 1.234},
+        key5 := #{"hello" := 123},
+        key6 := Ref
     }} = foil:all(test),
     {error, module_not_found} = foil:lookup(test2, key),
     {error, module_not_found} = foil:all(test2),
