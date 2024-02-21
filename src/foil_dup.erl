@@ -1,4 +1,4 @@
--module(foil).
+-module(foil_dup).
 -include("foil.hrl").
 
 -compile(inline).
@@ -88,7 +88,8 @@ insert(Namespace, Key, Value) ->
 load(Namespace) ->
     try foil_modules:lookup(Namespace) of
         {ok, Module} ->
-            KVs = ets:tab2list(Module),
+            KVs = collect(ets:tab2list(Module)),
+            io:format("~p~n~p~n", [ets:tab2list(Module), KVs]),
             foil_compiler:load(Module, KVs);
         {error, key_not_found} ->
             {error, module_not_found}
@@ -120,7 +121,7 @@ new(Namespace) ->
             {error, module_exists};
         {error, key_not_found} ->
             Module = module(Namespace),
-            ets:new(Module, [named_table, public]),
+            ets:new(Module, [named_table, public, duplicate_bag]),
             Server = whereis(foil_server),
             ets:give_away(Module, Server, undefined),
             ets:insert(?FOIL_TABLE, {Namespace, Module}),
@@ -132,5 +133,17 @@ new(Namespace) ->
     end.
 
 %% private
+collect([]) ->
+    [];
+collect([{Key, Value} | T]) ->
+    collect(T, Key, [Value], []).
+
+collect([], Key, ValueAcc, Acc) ->
+    [{Key, ValueAcc} | Acc];
+collect([{Key, Value} | T], Key, ValueAcc, Acc) ->
+    collect(T, Key, [Value | ValueAcc], Acc);
+collect([{Key2, Value} | T], Key, ValueAcc, Acc) ->
+    collect(T, Key2, [Value], [{Key, ValueAcc} | Acc]).
+
 module(Namespace) ->
     list_to_atom(atom_to_list(Namespace) ++ "_foil").
