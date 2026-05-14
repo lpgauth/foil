@@ -46,3 +46,34 @@ foil_test() ->
     {error, module_not_found} = foil:delete(test),
 
     foil_app:stop().
+
+non_literal_terms_test() ->
+    error_logger:tty(false),
+    foil_app:start(),
+
+    ok = foil:new(non_literal),
+
+    Ref = make_ref(),
+    Pid = self(),
+    Fun = fun () -> ok end,
+    Map = #{a => 1, <<"b">> => [Ref]},
+    Bitstring = <<1:1, 0:1, 1:1>>,
+
+    ok = foil:insert(non_literal, ref, Ref),
+    ok = foil:insert(non_literal, pid, Pid),
+    ok = foil:insert(non_literal, fun_value, Fun),
+    ok = foil:insert(non_literal, map, Map),
+    ok = foil:insert(non_literal, bitstring, Bitstring),
+    ok = foil:insert(non_literal, nested, {Ref, [Pid, #{ref => Ref}]}),
+
+    ok = foil:load(non_literal),
+
+    {ok, Ref} = foil:lookup(non_literal, ref),
+    {ok, Pid} = foil:lookup(non_literal, pid),
+    {ok, Fun} = foil:lookup(non_literal, fun_value),
+    {ok, Map} = foil:lookup(non_literal, map),
+    {ok, Bitstring} = foil:lookup(non_literal, bitstring),
+    {ok, {Ref, [Pid, #{ref := Ref}]}} = foil:lookup(non_literal, nested),
+
+    ok = foil:delete(non_literal),
+    foil_app:stop().

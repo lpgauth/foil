@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.5
+
+### Added
+
+- `foil_compiler:to_syntax/1` now accepts maps, references, pids,
+  ports, funs, and non-byte-aligned bitstrings. Maps compile to a
+  proper `map_expr` literal. The rest have no abstract literal form,
+  so they ride through an integer syntax node — the BEAM module
+  loader carries them in the compiled module's constant pool as-is,
+  and `foil:lookup/2` returns them unchanged.
+- eunit case `non_literal_terms_test` round-trips each new type
+  (including a nested tuple/map combination that mixes literal and
+  non-literal values).
+
 ## 0.1.4
 
 ### Changed
