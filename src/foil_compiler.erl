@@ -72,4 +72,28 @@ to_syntax(Integer) when is_integer(Integer) ->
 to_syntax(List) when is_list(List) ->
     erl_syntax:list([to_syntax(X) || X <- List]);
 to_syntax(Tuple) when is_tuple(Tuple) ->
-    erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]).
+    erl_syntax:tuple([to_syntax(X) || X <- tuple_to_list(Tuple)]);
+to_syntax(Map) when is_map(Map) ->
+    erl_syntax:map_expr(
+        [erl_syntax:map_field_assoc(to_syntax(K), to_syntax(V))
+            || {K, V} <- maps:to_list(Map)]);
+%% Non-representable terms (references, pids, ports, funs, non-byte-aligned
+%% bitstrings) have no abstract literal form. We smuggle them through an
+%% integer syntax node — the BEAM module loader carries the term in the
+%% compiled module's constant pool as-is, so lookup/1 returns it unchanged.
+to_syntax(Ref) when is_reference(Ref) ->
+    smuggle(Ref);
+to_syntax(Pid) when is_pid(Pid) ->
+    smuggle(Pid);
+to_syntax(Port) when is_port(Port) ->
+    smuggle(Port);
+to_syntax(Fun) when is_function(Fun) ->
+    smuggle(Fun);
+to_syntax(Bitstring) when is_bitstring(Bitstring) ->
+    smuggle(Bitstring).
+
+%% Goes through apply/3 so dialyzer doesn't enforce
+%% erl_syntax:integer/1's `integer()` contract on the call site —
+%% the spec violation is the whole point (see to_syntax/1 above).
+smuggle(Term) ->
+    erlang:apply(erl_syntax, integer, [Term]).
