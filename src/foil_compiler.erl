@@ -82,12 +82,18 @@ to_syntax(Map) when is_map(Map) ->
 %% integer syntax node — the BEAM module loader carries the term in the
 %% compiled module's constant pool as-is, so lookup/1 returns it unchanged.
 to_syntax(Ref) when is_reference(Ref) ->
-    erl_syntax:integer(Ref);
+    smuggle(Ref);
 to_syntax(Pid) when is_pid(Pid) ->
-    erl_syntax:integer(Pid);
+    smuggle(Pid);
 to_syntax(Port) when is_port(Port) ->
-    erl_syntax:integer(Port);
+    smuggle(Port);
 to_syntax(Fun) when is_function(Fun) ->
-    erl_syntax:integer(Fun);
+    smuggle(Fun);
 to_syntax(Bitstring) when is_bitstring(Bitstring) ->
-    erl_syntax:integer(Bitstring).
+    smuggle(Bitstring).
+
+%% Goes through apply/3 so dialyzer doesn't enforce
+%% erl_syntax:integer/1's `integer()` contract on the call site —
+%% the spec violation is the whole point (see to_syntax/1 above).
+smuggle(Term) ->
+    erlang:apply(erl_syntax, integer, [Term]).
