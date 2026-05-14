@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.6
+
+### Added
+
+- `foil:namespaces/0` returns `{ok, [namespace()]}` — the list of
+  registered namespaces. Saves callers from having to peek at
+  `foil_modules:lookup/1` internals to enumerate state.
+
+- `README` gained a "Performance characteristics" section spelling
+  out the compile-cost vs. lookup-cost trade-off (foil's `load/1` is
+  O(n); `lookup/2` beats ETS at ~0.1 μs vs 0.4 μs for `*_direct_*`
+  patterns). Helps callers pick foil vs. ETS for new use cases.
+
+### Plan-time notes
+
+- B4's "fix `foil_compiler:load/2` spec to propagate `compile_failed`"
+  recommendation was checked on inspection and not acted on:
+  `compile:forms/2` can only fail when the forms produced by
+  `foil_compiler:forms/2` are malformed, which is a foil internal
+  bug rather than a runtime user-facing error. The current
+  `{ok, Module, Bin} = compile:forms(...)` badmatch crashes loudly
+  on that path, which is the right behaviour. Surfacing it as
+  `{error, compile_failed}` would force every caller to write a
+  branch they can't sensibly handle.
+
 ## 0.1.5
 
 ### Added
