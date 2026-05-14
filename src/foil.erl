@@ -5,6 +5,7 @@
 -compile({inline_size, 512}).
 
 -ignore_xref([
+    {foil_modules, all, 0},
     {foil_modules, lookup, 1}
 ]).
 
