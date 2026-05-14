@@ -1,5 +1,7 @@
-ELVIS=./bin/elvis
+REBAR3=$(shell which rebar3)
+ifeq ($(REBAR3),)
 REBAR3=./bin/rebar3
+endif
 
 all: compile
 
@@ -16,32 +18,18 @@ compile:
 	@echo "Running rebar3 compile..."
 	@$(REBAR3) as compile compile
 
-coveralls:
-	@echo "Running rebar3 coveralls send..."
-	@$(REBAR3) as test coveralls send
-
 dialyzer:
-	@echo "Running rebar3 dialyze..."
+	@echo "Running rebar3 dialyzer..."
 	@$(REBAR3) dialyzer
-
-edoc:
-	@echo "Running rebar3 edoc..."
-	@$(REBAR3) as edoc edoc
-
-elvis:
-	@echo "Running elvis rock..."
-	@$(ELVIS) rock
 
 eunit:
 	@echo "Running rebar3 eunit..."
 	@$(REBAR3) do eunit -cv, cover -v
 
-test: elvis xref eunit dialyzer
-
-travis: test coveralls
+test: xref eunit dialyzer
 
 xref:
 	@echo "Running rebar3 xref..."
 	@$(REBAR3) xref
 
-.PHONY: bench clean compile coveralls dialyzer edoc elvis eunit xref
+.PHONY: bench clean compile dialyzer eunit test xref

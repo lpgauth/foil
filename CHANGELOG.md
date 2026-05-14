@@ -1,0 +1,27 @@
+# Changelog
+
+## 0.1.4
+
+### Changed
+
+- CI moved from Travis (decommissioned years ago) to GitHub Actions.
+  Matrix now covers OTP 25, 26, 27, 28.
+- Documentation migrated from `edown` to `rebar3_ex_doc`. Generated
+  `doc/` directory removed; HTML docs are now published to hexdocs.
+- Bumped `metal` dependency from `0.1.1` to `0.1.2`.
+- Tightened the `error/0` type from `{error, atom()}` to a sum:
+  `{error, foil_not_started | key_not_found | module_exists |
+  module_not_found}`. Dialyzer-checkable; same atoms the code already
+  returns. No behavioural change.
+- `foil.erl` refactored to dispatch through a `?WITH_MODULE(...)` macro
+  (defined in `foil.hrl`). Removes ~40 lines of repeated try/catch
+  scaffolding from `all/1`, `delete/1`, `delete/2`, `insert/3`,
+  `load/1`, and `lookup/2`. Macro rather than function so the cache
+  hot path stays branch-only; bench numbers unchanged.
+
+### Removed
+
+- `.travis.yml`, `elvis.config`, `bin/elvis`, `rebar.config.script`
+  (rebar2 compatibility) — all unused.
+- `coveralls` plugin and Makefile target — Travis-specific tooling.
+- Coveralls and Travis build badges from the README.

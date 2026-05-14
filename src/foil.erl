@@ -8,7 +8,6 @@
     {foil_modules, lookup, 1}
 ]).
 
-
 -export([
     all/1,
     delete/1,
@@ -20,96 +19,57 @@
 ]).
 
 %% public
+
 -spec all(namespace()) ->
     {ok, #{key() := value()}} | error().
 
 all(Namespace) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            Module:all();
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, Module:all()).
 
 -spec delete(namespace()) ->
     ok | error().
 
 delete(Namespace) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            ets:delete(Module),
-            ets:delete(?FOIL_TABLE, Namespace),
-            KVs = ets:tab2list(?FOIL_TABLE),
-            foil_compiler:load(foil_modules, KVs),
-            ok;
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, begin
+        ets:delete(Module),
+        ets:delete(?FOIL_TABLE, Namespace),
+        KVs = ets:tab2list(?FOIL_TABLE),
+        foil_compiler:load(foil_modules, KVs),
+        ok
+    end).
 
 -spec delete(namespace(), key()) ->
     ok | error().
 
 delete(Namespace, Key) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            ets:delete(Module, Key),
-            ok;
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, begin
+        ets:delete(Module, Key),
+        ok
+    end).
 
 -spec insert(namespace(), key(), value()) ->
     ok | error().
 
 insert(Namespace, Key, Value) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            ets:insert(Module, {Key, Value}),
-            ok;
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, begin
+        ets:insert(Module, {Key, Value}),
+        ok
+    end).
 
 -spec load(namespace()) ->
     ok | error().
 
 load(Namespace) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            KVs = ets:tab2list(Module),
-            foil_compiler:load(Module, KVs);
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, begin
+        KVs = ets:tab2list(Module),
+        foil_compiler:load(Module, KVs)
+    end).
 
 -spec lookup(namespace(), key()) ->
     {ok, value()} | error().
 
 lookup(Namespace, Key) ->
-    try foil_modules:lookup(Namespace) of
-        {ok, Module} ->
-            Module:lookup(Key);
-        {error, key_not_found} ->
-            {error, module_not_found}
-    catch
-        error:undef ->
-            {error, foil_not_started}
-    end.
+    ?WITH_MODULE(Namespace, Module, Module:lookup(Key)).
 
 -spec new(namespace()) ->
     ok | error().
@@ -130,6 +90,8 @@ new(Namespace) ->
         error:undef ->
             {error, foil_not_started}
     end.
+
 %% private
+
 module(Namespace) ->
     list_to_atom(atom_to_list(Namespace) ++ "_foil").

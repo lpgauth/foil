@@ -2,8 +2,11 @@
 
 High-Performance Erlang Cache Compiler
 
-[![Build Status](https://travis-ci.org/lpgauth/foil.svg?branch=master)](https://travis-ci.org/lpgauth/foil)
-[![Coverage Status](https://coveralls.io/repos/github/lpgauth/foil/badge.svg?branch=master)](https://coveralls.io/github/lpgauth/foil?branch=master)
+![Build Status](https://github.com/lpgauth/foil/workflows/Erlang%20CI/badge.svg)
+
+### Requirements
+
+* Erlang/OTP 25+
 
 ## About
 
@@ -11,7 +14,7 @@ Foil is a cache that compiles key-values into Erlang modules. Key-values can be 
 
 ## API
 
-<a href="https://github.com/lpgauth/foil/blob/master/doc/foil.md#index" class="module">Function Index</a>
+[Function reference on hexdocs](https://hexdocs.pm/foil/)
 
 ## Benchmarks
 
@@ -69,16 +72,13 @@ ok
 ## Tests
 
 ```makefile
-make dialyzer
-make elvis
-make eunit
-make xref
+make test
 ```
 ## License
 ```license
 The MIT License (MIT)
 
-Copyright (c) 2017 Louis-Philippe Gauthier
+Copyright (c) 2017-2026 Louis-Philippe Gauthier
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,0 +1,22 @@
+name: Erlang CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        erlang: [25, 26, 27, 28]
+
+    container:
+      image: erlang:${{ matrix.erlang }}
+
+    steps:
+    - uses: actions/checkout@v5
+    - name: Compile
+      run: make compile
+    - name: Run xref
+      run: make xref
+    - name: Run eunit
+      run: make eunit
+    - name: Run dialyzer
+      run: make dialyzer

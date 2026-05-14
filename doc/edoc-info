@@ -1,3 +1,0 @@
-%% encoding: UTF-8
-{application,foil}.
-{modules,[foil,foil_app,foil_compiler,foil_server,foil_sup]}.
