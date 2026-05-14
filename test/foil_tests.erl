@@ -77,3 +77,26 @@ non_literal_terms_test() ->
 
     ok = foil:delete(non_literal),
     foil_app:stop().
+
+namespaces_test() ->
+    error_logger:tty(false),
+    foil_app:start(),
+
+    %% other tests may have left compiled foil_modules behind in this
+    %% beam; clear it so we start from a known state.
+    {ok, _} = foil:namespaces(),
+    [ok = foil:delete(NS) || NS <- element(2, foil:namespaces())],
+    {ok, []} = foil:namespaces(),
+
+    ok = foil:new(ns_a),
+    ok = foil:new(ns_b),
+    {ok, NS1} = foil:namespaces(),
+    [ns_a, ns_b] = lists:sort(NS1),
+
+    ok = foil:delete(ns_a),
+    {ok, [ns_b]} = foil:namespaces(),
+
+    ok = foil:delete(ns_b),
+    {ok, []} = foil:namespaces(),
+
+    foil_app:stop().

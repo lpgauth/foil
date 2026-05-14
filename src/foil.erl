@@ -15,6 +15,7 @@
     insert/3,
     load/1,
     lookup/2,
+    namespaces/0,
     new/1
 ]).
 
@@ -70,6 +71,18 @@ load(Namespace) ->
 
 lookup(Namespace, Key) ->
     ?WITH_MODULE(Namespace, Module, Module:lookup(Key)).
+
+-spec namespaces() ->
+    {ok, [namespace()]} | {error, foil_not_started}.
+
+namespaces() ->
+    try foil_modules:all() of
+        {ok, Map} ->
+            {ok, maps:keys(Map)}
+    catch
+        error:undef ->
+            {error, foil_not_started}
+    end.
 
 -spec new(namespace()) ->
     ok | error().
