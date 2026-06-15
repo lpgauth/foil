@@ -78,6 +78,26 @@ non_literal_terms_test() ->
     ok = foil:delete(non_literal),
     foil_app:stop().
 
+elixir_shim_test() ->
+    error_logger:tty(false),
+    foil_app:start(),
+
+    ok = 'Elixir.Foil':new(es),
+    ok = 'Elixir.Foil':insert(es, key, value),
+    ok = 'Elixir.Foil':load(es),
+
+    {ok, value} = 'Elixir.Foil':lookup(es, key),
+    {error, key_not_found} = 'Elixir.Foil':lookup(es, missing),
+    {ok, #{key := value}} = 'Elixir.Foil':all(es),
+    {ok, NS} = 'Elixir.Foil':namespaces(),
+    true = lists:member(es, NS),
+
+    ok = 'Elixir.Foil':delete(es, key),
+    ok = 'Elixir.Foil':delete(es),
+    {error, module_not_found} = 'Elixir.Foil':lookup(es, key),
+
+    foil_app:stop().
+
 namespaces_test() ->
     error_logger:tty(false),
     foil_app:start(),

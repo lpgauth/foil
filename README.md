@@ -81,6 +81,31 @@ ok
 {error, key_not_found}
 ```
 
+## Elixir
+
+Foil ships an `Foil` shim module, so the same API is available from
+Elixir with no extra dependency:
+
+```elixir
+iex> :foil_app.start()
+{:ok, [:metal, :foil]}
+
+iex> Foil.new(:test)
+:ok
+
+iex> Foil.insert(:test, :key, "value")
+:ok
+
+iex> Foil.load(:test)
+:ok
+
+iex> Foil.lookup(:test, :key)
+{:ok, "value"}
+
+iex> Foil.namespaces()
+{:ok, [:test]}
+```
+
 ## Tests
 
 ```makefile
