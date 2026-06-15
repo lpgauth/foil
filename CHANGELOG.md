@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.7
+
+### Added
+
+- Elixir shim module `'Elixir.Foil'` (`src/Elixir.Foil.erl`), making
+  the full foil API callable from Elixir as `Foil.lookup/2`,
+  `Foil.insert/3`, `Foil.new/1`, `Foil.load/1`, `Foil.all/1`,
+  `Foil.delete/1,2`, and `Foil.namespaces/0`. On the BEAM an Elixir
+  module `Foo` is the atom `'Elixir.Foo'`, so the shim is plain Erlang
+  that delegates to `foil` — no Mix/Elixir build step is required.
+
 ## 0.1.6
 
 ### Added
