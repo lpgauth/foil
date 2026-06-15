@@ -5,11 +5,6 @@ endif
 
 all: compile
 
-bench:
-	@echo "Running bin/bench.sh..."
-	@$(REBAR3) as test compile
-	@./bin/bench.sh
-
 clean:
 	@echo "Running rebar3 clean..."
 	@$(REBAR3) clean -a
@@ -32,4 +27,4 @@ xref:
 	@echo "Running rebar3 xref..."
 	@$(REBAR3) xref
 
-.PHONY: bench clean compile dialyzer eunit test xref
+.PHONY: clean compile dialyzer eunit test xref
